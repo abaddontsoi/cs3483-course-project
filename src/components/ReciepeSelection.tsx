@@ -25,7 +25,7 @@ export const ReciepeSelection = ({ setCurrentReciepe, reciepeList }: {
     const carouselBtnStyle: React.CSSProperties = {
         background: "transparent",
         border: "none",
-        fontSize: "28px",
+        fontSize: "48px",
         cursor: "pointer",
     };
 
@@ -43,8 +43,12 @@ export const ReciepeSelection = ({ setCurrentReciepe, reciepeList }: {
         >◀</button>
 
         {reciepeList.map((r, idx) => (
-            <div className={`thumbnails ${idx === currentReciepeIndex ? 'active' : ''}`} key={idx}>
-                <div key={idx} className="thumb">
+            <div className={`thumbnails ${idx === currentReciepeIndex ? 'thumb-active' : ''}`} key={idx}>
+                <div
+                    key={idx}
+                    className="thumb"
+                    onClick={() => setCurrentReciepeIndex(idx)}
+                >
                     <img src={r.image} alt={`thumb-${idx}`} />
                 </div>
             </div>

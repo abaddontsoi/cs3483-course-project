@@ -2,6 +2,14 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+:root {
+  --selection-height: 104px;
+  --accent-color-start: #7b4be6;
+  --accent-color-end: #6a3be0;
+  --accent: linear-gradient(90deg, var(--accent-color-start), var(--accent-color-end));
+}
+
+
 /* Recipe UI styles */
 .recipe-root {
   max-width: 1200px;
@@ -16,13 +24,15 @@ body {
   overflow: auto;
 }
 
+.thumb-active {
+  border: 6px var(--accent-color-end) solid;
+}
+
 .thumb {
-  width: 72px;
-  height: 72px;
+  width: var(--selection-height);
+  height: var(--selection-height);
   border-radius: 6px;
   overflow: hidden;
-  opacity: 0.35;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.04) inset;
 }
 
 .thumb img {
@@ -41,14 +51,14 @@ body {
 .timer-play {
   margin-left: auto;
   position: absolute;
-  right: 24px;
-  top: 6px;
+  right: 0px;
+  top: 21px;
 }
 
 .play-triangle {
-  width: 92px;
-  height: 92px;
-  background: linear-gradient(90deg, #7b4be6, #6a3be0);
+  height: var(--selection-height);
+  width: var(--selection-height);
+  background: var(--accent);
   clip-path: polygon(0 0, 100% 50%, 0 100%);
   color: #fff;
   display: flex;

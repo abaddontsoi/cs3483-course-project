@@ -1,3 +1,5 @@
+"use server";
+
 export interface IReciepe {
     title: string;
     image: string;
@@ -7,28 +9,18 @@ export interface IReciepe {
     steps: string[];
 }
 
-export const reciepe: IReciepe[] = [
-    {
-        title: "番茄.酸菜.魚.家常菜",
-        image:
-            "/images/番茄.酸菜魚家常菜.jpg",
-        servings: "4 人份",
-        time: "30分",
-        ingredients: [
-            "鱸魚魚片 1斤",
-            "番茄 3 顆",
-            "酸菜切條 4 兩",
-            "小黃瓜切滾刀 1 條",
-            "洋蔥切塊 半顆",
-            "番茄醬",
-            "香菜",
-            "檸檬片 3 片",
-        ],
-        steps: [
-            "把鱸魚片抹點米酒備用",
-            "起一點油鍋，放進洋蔥塊、青蔥段，薑片先煸香後，放進酸菜絲、番茄塊，番茄醬續炒一下後，加入乾燥羅勒葉拌炒後，再加入水，小火燉煮20分",
-            "再放點鹽巴調味後，放進鱸魚片、小黃瓜、檸檬片滾個2分鐘後",
-            "再灑上一些乾燥羅勒葉跟香菜末，即完成了唷!",
-        ],
-    }
-]
+import path from "path";
+import fs from "fs";
+
+
+export const getReciepe = async (): Promise<IReciepe[]> => {
+    const reciepeDirectory = path.join(process.cwd(), "src/reciepes");
+    const fileNames = fs.readdirSync(reciepeDirectory);
+    const reciepeList = fileNames.map((fileName) => {
+        const fullPath = path.join(reciepeDirectory, fileName);
+        const fileContents = fs.readFileSync(fullPath, "utf8");
+        const reciepeData = JSON.parse(fileContents) as IReciepe;
+        return reciepeData;
+    });
+    return reciepeList;
+}

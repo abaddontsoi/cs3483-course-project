@@ -5,7 +5,7 @@ export const ReciepeBody = ({ reciepe }: { reciepe: IReciepe }) => {
     return (<>
         <div className="recipe-body">
             <div className="left-col">
-                <img className="main-image" src={r.image} alt={r.title} />
+                {r?.image && <img className="main-image" src={r.image} alt={r.title} />}
 
                 <div className="ingredients">
                     <h3>預備食材</h3>
