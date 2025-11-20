@@ -3,8 +3,8 @@
 export interface IReciepe {
     title: string;
     image: string;
-    servings: string;
-    time: string;
+    servings?: string;
+    time?: string;
     ingredients: string[];
     steps: string[];
 }

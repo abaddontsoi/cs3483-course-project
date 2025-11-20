@@ -9,7 +9,7 @@ export const ReciepeBody = ({ reciepe }: { reciepe: IReciepe }) => {
 
                 <div className="ingredients">
                     <h3>預備食材</h3>
-                    <div className="meta">👥 {r.servings}</div>
+                    {r.servings && <div className="meta">👥 {r.servings}</div>}
                     <ul>
                         {r.ingredients?.map((ing, idx) => (
                             <li key={idx}>{ing}</li>
@@ -30,7 +30,7 @@ export const ReciepeBody = ({ reciepe }: { reciepe: IReciepe }) => {
 
                 <div className="cook-steps">
                     <h4>料理步驟</h4>
-                    <div className="time">⏲ {r.time}</div>
+                    {r.time && <div className="time">⏲ {r.time}</div>}
                     <ol>
                         {r.steps?.map((s, i) => (
                             <li key={i}>
