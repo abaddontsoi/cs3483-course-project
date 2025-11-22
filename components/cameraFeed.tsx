@@ -1,106 +1,123 @@
 'use client';
 import React, { useRef, useEffect, useState } from 'react';
+
 import Webcam from 'react-webcam';
 import {
     FilesetResolver,
     HandLandmarker,
     DrawingUtils,
+    NormalizedLandmark,
+    GestureRecognizer
 } from '@mediapipe/tasks-vision';
 
-const CameraFeed: React.FC = () => {
+const CameraFeed = ({ setHandLandmarks, setGesture }: {
+    setHandLandmarks: (landmarks: NormalizedLandmark[]) => void;
+    setGesture: (gesture: string) => void;
+}) => {
     const webcamRef = useRef<Webcam>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const handLandmarkerRef = useRef<HandLandmarker | null>(null);
+    const recognizerRef = useRef<GestureRecognizer | null>(null);
 
+    // const [gesture, setGesture] = useState<string>('none');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const createHandLandmarker = async () => {
+    const createGestureRecognizer = async () => {
         try {
-            // This loads the WebAssembly files from CDN
             const vision = await FilesetResolver.forVisionTasks(
                 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
             );
 
-            // Create the hand detector model
-            const handLandmarker = await HandLandmarker.createFromOptions(vision, {
+            const recognizer = await GestureRecognizer.createFromOptions(vision, {
                 baseOptions: {
                     modelAssetPath:
-                        'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
-                    delegate: 'GPU', // Use GPU if available (falls back to CPU)
+                        'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task',
+                    delegate: 'GPU',
                 },
-                runningMode: 'VIDEO',     // Important: VIDEO mode for real-time
-                numHands: 2,              // Detect up to 2 hands
-                minHandDetectionConfidence: 0.5,
-                minTrackingConfidence: 0.5,
+                runningMode: 'VIDEO',
+                numHands: 2,
             });
 
-            handLandmarkerRef.current = handLandmarker;
+            recognizerRef.current = recognizer;
             setIsLoading(false);
-            console.log('Hand Landmarker loaded!');
+            console.log('Gesture Recognizer loaded!');
         } catch (err) {
-            setError('Failed to load model');
+            setError('Failed to load gesture model');
             console.error(err);
         }
     };
 
-
     const detectHands = async () => {
-        if (!webcamRef.current?.video || !canvasRef.current || !handLandmarkerRef.current) return;
-
-        const video = webcamRef.current.video;
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        if (video.videoWidth === 0 || video.videoHeight === 0) {
-            console.warn('Video not ready yet (dimensions 0x0), retrying...');
+        if (!webcamRef.current?.video || !canvasRef.current || !recognizerRef.current) {
             requestAnimationFrame(detectHands);
             return;
         }
 
+        const video = webcamRef.current.video!;
+        if (video.readyState !== 4 || video.videoWidth === 0) {
+            requestAnimationFrame(detectHands);
+            return;
+        }
+
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d')!;
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        const startTimeMs = performance.now();
 
-        try {
-            // Run detection (now safe!)
-            const results = await handLandmarkerRef.current.detectForVideo(
-                video,
-                startTimeMs
-            );
+        const results = await recognizerRef.current.recognizeForVideo(video, performance.now());
 
-            // Clear and draw the video frame
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // Draw hand landmarks and connections
-            if (results.landmarks) {
-                const drawingUtils = new DrawingUtils(ctx);
+        const drawingUtils = new DrawingUtils(ctx);
 
-                for (const landmarks of results.landmarks) {
-                    drawingUtils.drawLandmarks(landmarks, {
-                        color: '#00FF00',
-                        lineWidth: 2,
-                        radius: 4,
-                    });
+        if (results.landmarks.length > 0) {
+            results.landmarks.forEach((landmarks, index) => {
+                // Send BOTH hands' landmarks to parent
+                // setHandLandmarks(prev => {
+                //     const updated = [...prev];
+                //     updated[index] = landmarks;
+                //     return updated.slice(0, 2); // keep only 2 hands
+                // });
 
-                    drawingUtils.drawConnectors(
-                        landmarks,
-                        HandLandmarker.HAND_CONNECTIONS,
-                        { color: '#00FF00', lineWidth: 4 }
-                    );
+                // Draw skeleton
+                drawingUtils.drawConnectors(landmarks, GestureRecognizer.HAND_CONNECTIONS, {
+                    color: '#00FF00',
+                    lineWidth: 5,
+                });
+                drawingUtils.drawLandmarks(landmarks, {
+                    color: '#FF0000',
+                    lineWidth: 2,
+                    radius: 6,
+                });
+
+                // Get and show gesture for this hand
+                const gestureInfo = results.gestures[index]?.[0];
+                const gestureName = gestureInfo?.categoryName || 'none';
+
+                if (gestureInfo && gestureInfo.score > 0.7) {
+                    const wrist = landmarks[0];
+                    ctx.font = 'bold 36px sans-serif';
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 6;
+                    ctx.fillStyle = '#00FF00';
+                    ctx.strokeText(gestureName.toUpperCase(), wrist.x * canvas.width - 100, wrist.y * canvas.height - 30);
+                    ctx.fillText(gestureName.toUpperCase(), wrist.x * canvas.width - 100, wrist.y * canvas.height - 30);
                 }
-            }
-        } catch (err) {
-            console.error('Detection error:', err);
-            setError('Detection failed—check console');
+
+                // Update state with primary gesture (first hand)
+                if (index === 0) {
+                    setGesture(gestureName);
+                }
+            });
+        } else {
+            setGesture('none');
+            setHandLandmarks([]); // clear when no hands
         }
 
         ctx.restore();
-
-        // Keep looping
         requestAnimationFrame(detectHands);
     };
 
@@ -111,10 +128,9 @@ const CameraFeed: React.FC = () => {
 
     // Run once on mount
     useEffect(() => {
-        createHandLandmarker();
-
+        createGestureRecognizer();
         return () => {
-            handLandmarkerRef.current?.close(); // Clean up model
+            recognizerRef.current?.close(); // Clean up model
         };
     }, []);
 
@@ -126,13 +142,6 @@ const CameraFeed: React.FC = () => {
 
     return (
         <div className="relative w-full max-w-2xl mx-auto mt-10">
-            <h1 className="text-3xl font-bold text-center mb-4">
-                Hand Pose Detection with MediaPipe
-            </h1>
-
-            {isLoading && <p className="text-center">Loading model...</p>}
-            {error && <p className="text-red-500 text-center">{error}</p>}
-
             <div className="relative border-4 border-gray-800 rounded-lg overflow-hidden">
                 {/* Hidden webcam */}
                 <Webcam
@@ -143,19 +152,16 @@ const CameraFeed: React.FC = () => {
                     mirrored={true}
                     onUserMedia={handleVideoReady}
                     onUserMediaError={(err) => setError('Camera access denied')}
-                    className="absolute opacity-0"
+                    style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
+                    className="hidden" // or visibility-hidden + zero size
                 />
 
                 {/* Canvas where we draw video + landmarks */}
                 <canvas
                     ref={canvasRef}
-                    className="w-full h-auto scale-x-[-1]"
+                    className="w-full h-full object-cover scale-x-[-1]"
                 />
             </div>
-
-            <p className="text-center mt-4 text-gray-600">
-                Show your hand to the camera
-            </p>
         </div>
     );
 };
