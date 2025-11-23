@@ -11,7 +11,7 @@ import {
 } from '@mediapipe/tasks-vision';
 
 const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
-    handleLandmarkUpdate: (newLandmark: NormalizedLandmark) => void;
+    handleLandmarkUpdate: (newLandmark: NormalizedLandmark | null) => void;
     setGesture: (gesture: string) => void;
 }) => {
     const webcamRef = useRef<Webcam>(null);
@@ -61,9 +61,7 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
 
         const now = performance.now();
 
-        // This is the key: limit detection to 3 times per second (every 100ms)
         if (now - lastDetectionTimeRef.current < 500) {
-            // Still draw the video frame smoothly, but skip heavy detection
             const canvas = canvasRef.current;
             const ctx = canvas.getContext('2d')!;
             canvas.width = video.videoWidth;
@@ -120,6 +118,7 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
             handleLandmarkUpdate(flippedLandmarks[0]);
             setGesture(gestureName);
         } else {
+            handleLandmarkUpdate(null);
             setGesture('none');
         }
 

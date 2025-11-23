@@ -49,7 +49,7 @@ export default function CameraPage() {
         prevLandmarkRef.current = current;
     }, [landmark]);
 
-    const handleLandmarkUpdate = (newLandmark: NormalizedLandmark) => {
+    const handleLandmarkUpdate = (newLandmark: NormalizedLandmark | null) => {
         setHandLandmark(newLandmark);
     };
 

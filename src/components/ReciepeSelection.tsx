@@ -3,19 +3,21 @@
 import { useEffect, useState } from "react";
 import { IReciepe } from "../ReciepeContent";
 
-export const ReciepeSelection = ({ setCurrentReciepe, reciepeList }: {
+export const ReciepeSelection = ({ currentReciepeIndex, setCurrentReciepeIndex, setCurrentReciepe, reciepeList }: {
+    currentReciepeIndex: number;
     reciepeList: IReciepe[];
     setCurrentReciepe: (reciepe: IReciepe) => void;
+    setCurrentReciepeIndex: (inx: number) => void
 }) => {
 
-    const [currentReciepeIndex, setCurrentReciepeIndex] = useState(0);
+    // const [currentReciepeIndex, setCurrentReciepeIndex] = useState(0);
 
     const handlePrevReciepeClick = () => {
-        setCurrentReciepeIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : reciepeList.length - 1));
+        setCurrentReciepeIndex(currentReciepeIndex > 0 ? currentReciepeIndex - 1 : reciepeList.length - 1);
     }
 
     const handleNextReciepeClick = () => {
-        setCurrentReciepeIndex((prevIndex) => (prevIndex < reciepeList.length - 1 ? prevIndex + 1 : 0));
+        setCurrentReciepeIndex(currentReciepeIndex < reciepeList.length - 1 ? currentReciepeIndex + 1 : 0);
     }
 
     useEffect(() => {
