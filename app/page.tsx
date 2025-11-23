@@ -15,13 +15,10 @@ export default function Home() {
 	const [currentReciepeIndex, setCurrentReciepeIndex] = useState(0);
 
 	const [landmark, setHandLandmark] = useState<NormalizedLandmark | null>(null);
+	const [prevLandmark, setPrevLandmark] = useState<NormalizedLandmark | null>(null);
 	const [gesture, setGesture] = useState<string>('none');
 
-	const prevLandmarkRef = useRef<NormalizedLandmark | null>(null);
-
 	const [velocityVector, setVelocityVector] = useState({ x: 0, y: 0 });
-	const [horizontalDir, setHorizontalDir] = useState<string>("Staying");
-	const [verticalDir, setVerticalDir] = useState<string>("Staying");
 
 	useEffect(() => {
 		const fetchReciepe = async () => {
@@ -35,53 +32,19 @@ export default function Home() {
 	}, [])
 
 	useEffect(() => {
-		const current = landmark;
-		const previous = prevLandmarkRef.current;
-
-		if (current) {
-			// Hand is detected
-			if (previous) {
-				const dx = current.x - previous.x;
-				const dy = current.y - previous.y;
-
+		if (landmark) {
+			if (prevLandmark) {
+				const dx = landmark.x - prevLandmark.x;
+				const dy = landmark.y - prevLandmark.y;
 				setVelocityVector({ x: dx, y: dy });
-
-				// Horizontal direction
-				if (Math.abs(dx) < 0.02) {
-					setHorizontalDir("Staying");
-				} else if (dx > 0) {
-					setHorizontalDir("To right");
-				} else {
-					setHorizontalDir("To left");
-				}
-
-				// Vertical direction
-				if (Math.abs(dy) < 0.02) {
-					setVerticalDir("Staying");
-				} else if (dy > 0) {
-					setVerticalDir("Down");
-				} else {
-					setVerticalDir("Up");
-				}
-			} else {
-				// First time hand appears
-				setHorizontalDir("Staying");
-				setVerticalDir("Staying");
-				setVelocityVector({ x: 0, y: 0 });
 			}
-
-			// Always update previous for next frame
-			prevLandmarkRef.current = current;
-
 		} else {
-			prevLandmarkRef.current = null;
 			setVelocityVector({ x: 0, y: 0 });
-			setHorizontalDir("No hand");
-			setVerticalDir("No hand");
 		}
+		setPrevLandmark(landmark);
 		console.log({
-			currentHand: current,
-			prev: prevLandmarkRef.current,
+			currentHand: landmark,
+			prev: prevLandmark,
 		});
 	}, [landmark]);
 
@@ -102,6 +65,15 @@ export default function Home() {
 		<section className="recipe-root">
 			<CameraFeed handleLandmarkUpdate={handleLandmarkUpdate} setGesture={setGesture} />
 			<div>{gesture}</div>
+			<div>
+				Prev: {prevLandmark?.x} {prevLandmark?.y}
+			</div>
+			<div>
+				Curr: {landmark?.x} {landmark?.y}
+			</div>
+			<div>
+				V: {velocityVector.x} {velocityVector.y}
+			</div>
 			<ReciepeSelection
 				currentReciepeIndex={currentReciepeIndex}
 				reciepeList={reciepeList}

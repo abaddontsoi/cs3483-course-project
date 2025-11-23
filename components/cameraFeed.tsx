@@ -50,18 +50,22 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
     const detectHands = async () => {
         if (!webcamRef.current?.video || !canvasRef.current || !recognizerRef.current) {
             requestAnimationFrame(detectHands);
+            handleLandmarkUpdate(null);
+            setGesture('none');
             return;
         }
 
         const video = webcamRef.current.video!;
         if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+            handleLandmarkUpdate(null);
+            setGesture('none');
             requestAnimationFrame(detectHands);
             return;
         }
 
         const now = performance.now();
 
-        if (now - lastDetectionTimeRef.current < 500) {
+        if (now - lastDetectionTimeRef.current < 300) {
             const canvas = canvasRef.current;
             const ctx = canvas.getContext('2d')!;
             canvas.width = video.videoWidth;
@@ -95,23 +99,11 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
         const drawingUtils = new DrawingUtils(ctx);
 
         if (results.landmarks.length > 0) {
-            const landmarks = results.landmarks[0];
-
-            drawingUtils.drawConnectors(
-                landmarks,
-                GestureRecognizer.HAND_CONNECTIONS,
-                { color: '#00FF00', lineWidth: 5 }
-            );
-            drawingUtils.drawLandmarks(landmarks, {
-                color: '#FF0000',
-                lineWidth: 2,
-                radius: 6,
-            });
-
+            const landmark = results.landmarks[0];
             const gestureInfo = results.gestures[0]?.[0];
-            const gestureName = gestureInfo?.categoryName || 'none';
+            const gestureName = gestureInfo?.categoryName;
 
-            const flippedLandmarks = landmarks.map(lm => ({
+            const flippedLandmarks = landmark.map(lm => ({
                 ...lm,
                 x: 1 - lm.x
             }));
