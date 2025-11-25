@@ -56,29 +56,66 @@ export default function Home() {
 	useEffect(() => {
 		switch (gesture) {
 			case 'Open_Palm':
+				// Switch page
 				if (Math.abs(velocityVector.x) > 0.2) {
 					setPage(prev => prev == 0 ? 1 : 0)
 					prevLandmarkRef.current = null;
 					setHandLandmark(null);
 					setVelocityVector({ x: 0, y: 0 });
 				}
+
+				// Scrolling
+				if (page == 0) {
+					if (velocityVector.y > 0.2) {
+						// setCurrentReciepeIndex(prev => prev < reciepeList.length - 1 ? prev + 1 : 0);
+						prevLandmarkRef.current = null;
+						setHandLandmark(null);
+						setVelocityVector({ x: 0, y: 0 });
+					} else if (velocityVector.y < -0.2) {
+						// setCurrentReciepeIndex(prev => prev > 0 ? prev - 1 : reciepeList.length - 1);
+						prevLandmarkRef.current = null;
+						setHandLandmark(null);
+						setVelocityVector({ x: 0, y: 0 });
+					}
+				}
 				break;
 			case 'Closed_Fist':
-				if (velocityVector.y > 0.2) {
-					setCurrentReciepeIndex(prev => prev < reciepeList.length - 1 ? prev + 1 : 0);
-					prevLandmarkRef.current = null;
-					setHandLandmark(null);
-					setVelocityVector({ x: 0, y: 0 });
-				} else if (velocityVector.y < -0.2) {
-					setCurrentReciepeIndex(prev => prev > 0 ? prev - 1 : reciepeList.length - 1);
-					prevLandmarkRef.current = null;
-					setHandLandmark(null);
-					setVelocityVector({ x: 0, y: 0 });
+				// Recepies page
+				if (page == 0) {
+					if (velocityVector.y > 0.2) {
+						setCurrentReciepeIndex(prev => prev < reciepeList.length - 1 ? prev + 1 : 0);
+						prevLandmarkRef.current = null;
+						setHandLandmark(null);
+						setVelocityVector({ x: 0, y: 0 });
+					} else if (velocityVector.y < -0.2) {
+						setCurrentReciepeIndex(prev => prev > 0 ? prev - 1 : reciepeList.length - 1);
+						prevLandmarkRef.current = null;
+						setHandLandmark(null);
+						setVelocityVector({ x: 0, y: 0 });
+					}
+				} else if (page == 1) {
+					if (velocityVector.y > 0.2) {
+						setCurrentReciepeIndex(prev => prev < reciepeList.length - 1 ? prev + 1 : 0);
+						prevLandmarkRef.current = null;
+						setHandLandmark(null);
+						setVelocityVector({ x: 0, y: 0 });
+					} else if (velocityVector.y < -0.2) {
+						setCurrentReciepeIndex(prev => prev > 0 ? prev - 1 : reciepeList.length - 1);
+						prevLandmarkRef.current = null;
+						setHandLandmark(null);
+						setVelocityVector({ x: 0, y: 0 });
+					}
 				}
 				break;
 			case 'Thumb_Up':
+				if (page == 1) {
+
+				}
 				break;
 			case 'Thumb_Down':
+				if (page == 1) {
+
+				}
 				break;
 			default:
 				break;
