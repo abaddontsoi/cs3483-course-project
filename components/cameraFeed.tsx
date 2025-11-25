@@ -65,7 +65,7 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
 
         const now = performance.now();
 
-        if (now - lastDetectionTimeRef.current < 300) {
+        if (now - lastDetectionTimeRef.current < 500) {
             const canvas = canvasRef.current;
             const ctx = canvas.getContext('2d')!;
             canvas.width = video.videoWidth;
@@ -96,7 +96,6 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         const results = await recognizerRef.current.recognizeForVideo(video, now);
-        const drawingUtils = new DrawingUtils(ctx);
 
         if (results.landmarks.length > 0) {
             const landmark = results.landmarks[0];
@@ -110,7 +109,7 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
             handleLandmarkUpdate(flippedLandmarks[0]);
             setGesture(gestureName);
         } else {
-            handleLandmarkUpdate(null);
+            // handleLandmarkUpdate(null);
             setGesture('none');
         }
 
