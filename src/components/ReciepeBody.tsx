@@ -9,9 +9,9 @@ export const ReciepeBody = ({ reciepe }: { reciepe: IReciepe }) => {
 
                 <div className="ingredients">
                     <h3>預備食材</h3>
-                    {r.servings && <div className="meta">👥 {r.servings}</div>}
+                    {r?.servings && <div className="meta">👥 {r.servings}</div>}
                     <ul>
-                        {r.ingredients?.map((ing, idx) => (
+                        {r?.ingredients?.map((ing, idx) => (
                             <li key={idx}>{ing}</li>
                         ))}
                     </ul>
@@ -26,13 +26,13 @@ export const ReciepeBody = ({ reciepe }: { reciepe: IReciepe }) => {
                         margin: "0",
                         lineHeight: "0.95"
                     }}
-                >{r.title}</h1>
+                >{r?.title}</h1>
 
                 <div className="cook-steps">
                     <h4>料理步驟</h4>
-                    {r.time && <div className="time">⏲ {r.time}</div>}
+                    {r?.time && <div className="time">⏲ {r.time}</div>}
                     <ol>
-                        {r.steps?.map((s, i) => (
+                        {r?.steps?.map((s, i) => (
                             <li key={i}>
                                 <span className="step-num">{i + 1}</span>
                                 <div>{s}</div>
