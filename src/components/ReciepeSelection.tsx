@@ -24,45 +24,65 @@ export const ReciepeSelection = ({ currentReciepeIndex, setCurrentReciepeIndex, 
         setCurrentReciepe(reciepeList[currentReciepeIndex]);
     }, [currentReciepeIndex]);
 
-    const carouselBtnStyle: React.CSSProperties = {
-        background: "transparent",
-        border: "none",
-        fontSize: "48px",
-        cursor: "pointer",
-    };
-
     return (<div style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '18px 0',
         borderTop: '6px solid #222',
         borderBottom: '6px solid #222',
         position: 'relative',
     }}>
-        <button
-            style={carouselBtnStyle}
-            onClick={handlePrevReciepeClick}
-        >◀</button>
-
-        {reciepeList.map((r, idx) => (
-            <div className={`thumbnails ${idx === currentReciepeIndex ? 'thumb-active' : ''}`} key={idx}>
-                <div
-                    key={idx}
-                    className="thumb"
-                    onClick={() => setCurrentReciepeIndex(idx)}
-                >
-                    <img src={r.image} alt={`thumb-${idx}`} />
-                </div>
+        <div style={{
+            padding: '16px 16px 16px 0',
+            // padding: '16px 0',
+            borderRight: '6px solid #222',
+            display: 'flex',
+            paddingRight: '16px',
+            width: "90%",
+        }}>
+            <div
+                className="nav-triangle-l"
+                style={{
+                    display: "flex",
+                    width: "3%"
+                }}
+                onClick={handlePrevReciepeClick}
+            />
+            <div style={{
+                display: "flex",
+                width: "94%",
+                justifyContent: "space-between",
+                padding: "0 40px",
+            }}>
+                {reciepeList.map((r, idx) => (
+                    <div className={`thumbnails ${idx === currentReciepeIndex ? 'thumb-active' : ''}`} key={idx}>
+                        <div
+                            key={idx}
+                            className="thumb"
+                            onClick={() => setCurrentReciepeIndex(idx)}
+                        >
+                            <img src={r.image} alt={`thumb-${idx}`} />
+                        </div>
+                    </div>
+                ))}
             </div>
-        ))
-        }
-        <button
-            style={carouselBtnStyle}
-            onClick={handleNextReciepeClick}
-        >▶</button>
 
-        <div className="timer-play">
-            <div className="play-triangle">🕑</div>
+            <div
+                className="nav-triangle-r"
+                style={{
+                    display: "flex",
+                    width: "3%"
+                }}
+                onClick={handleNextReciepeClick}
+            />
         </div>
+
+        <div style={{
+            width: "10%",
+        }}>
+            <div className="timer-play">
+                <div className="play-triangle">🕑</div>
+            </div>
+        </div>
+
     </div >)
 }

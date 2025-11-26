@@ -12,24 +12,24 @@ body {
 
 /* Recipe UI styles */
 .recipe-root {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   color: #111;
 }
 
 .thumbnails {
   display: flex;
-  gap: 12px;
-  margin: 0 18px;
   overflow: auto;
+  opacity: 0.5;
 }
 
 .thumb-active {
-  border: 6px var(--accent-color-end) solid;
+  opacity: 1;
+  /* border: 6px var(--accent-color-end) solid; */
 }
 
 .thumb {
-  width: var(--selection-height);
+  width: calc(var(--selection-height) * 0.8);
   height: var(--selection-height);
   border-radius: 6px;
   overflow: hidden;
@@ -55,17 +55,36 @@ body {
   top: 21px;
 }
 
-.play-triangle {
+.nav-triangle-r,
+.play-triangle,
+.nav-triangle-l {
   height: var(--selection-height);
-  width: var(--selection-height);
   background: var(--accent);
-  clip-path: polygon(0 0, 100% 50%, 0 100%);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 26px;
 }
+
+.nav-triangle-l,
+.nav-triangle-r {
+  width: calc(var(--selection-height) * 0.2);
+}
+
+.play-triangle {
+  width: var(--selection-height);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.nav-triangle-l {
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+}
+
+.nav-triangle-r {
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+}
+
 
 .recipe-body {
   display: grid;
