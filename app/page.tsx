@@ -6,6 +6,7 @@ import { ReciepeBody } from "@/src/components/ReciepeBody";
 import { ReciepeSelection } from "@/src/components/ReciepeSelection";
 import CameraFeed from "@/components/cameraFeed";
 import { NormalizedLandmark } from "@mediapipe/tasks-vision";
+import TimerBody from "@/src/components/TimerBody";
 
 
 export default function Home() {
@@ -20,6 +21,8 @@ export default function Home() {
 	const [gesture, setGesture] = useState<string>('none');
 
 	const [velocityVector, setVelocityVector] = useState({ x: 0, y: 0 });
+
+	const [selectedDigit, setSelectedDigit] = useState<number>(0);
 
 	useEffect(() => {
 		const fetchReciepe = async () => {
@@ -149,6 +152,9 @@ export default function Home() {
 						setCurrentReciepeIndex={setCurrentReciepeIndex} />
 					{currentReciepe && <ReciepeBody reciepe={reciepeList[currentReciepeIndex]} />}
 				</>
+			} 
+			{
+				page == 1 && <TimerBody />
 			}
 		</section>
 	</>);
