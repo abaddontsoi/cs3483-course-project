@@ -12,11 +12,14 @@ import {
 
 const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
     handleLandmarkUpdate: (newLandmark: NormalizedLandmark | null) => void;
-    setGesture: (gesture: string) => void;
+    setGesture: (gesture: "Open_Palm" | "Closed_Fist" | "Thumb_Up" | "Thumb_Down" | "none") => void;
 }) => {
     const webcamRef = useRef<Webcam>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const recognizerRef = useRef<GestureRecognizer | null>(null);
+
+    const [currentLandmark, setCurrentLandmark] = useState<NormalizedLandmark | null>(null);
+    const [currentGesture, setCurrentGesture] = useState<String | null>(null);
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -52,6 +55,7 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
             requestAnimationFrame(detectHands);
             handleLandmarkUpdate(null);
             setGesture('none');
+            setCurrentGesture("none");
             return;
         }
 
@@ -59,6 +63,7 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
         if (video.readyState !== video.HAVE_ENOUGH_DATA) {
             handleLandmarkUpdate(null);
             setGesture('none');
+            setCurrentGesture("none");
             requestAnimationFrame(detectHands);
             return;
         }
@@ -107,9 +112,11 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
                 x: 1 - lm.x
             }));
             handleLandmarkUpdate(flippedLandmarks[0]);
-            setGesture(gestureName);
+            setCurrentLandmark(flippedLandmarks[0])
+            setGesture(gestureName as "Open_Palm" | "Closed_Fist" | "Thumb_Up" | "Thumb_Down");
+            setCurrentGesture(gestureName);
         } else {
-            // handleLandmarkUpdate(null);
+            setCurrentGesture('none');
             setGesture('none');
         }
 
@@ -155,6 +162,9 @@ const CameraFeed = ({ handleLandmarkUpdate, setGesture }: {
                     ref={canvasRef}
                     className="w-full h-full object-cover"
                 />
+                <div>Current Landmark: {currentLandmark?.x?.toFixed(3)} {currentLandmark?.y?.toFixed(3)}</div>
+                <div>Current Gesture: {currentGesture}</div>
+
             </div>
         </div>
     );
