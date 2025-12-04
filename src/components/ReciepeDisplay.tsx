@@ -6,19 +6,24 @@ import { IReciepe, getReciepe } from "@/src/ReciepeContent";
 import { ReciepeBody } from "@/src/components/ReciepeBody";
 import { ReciepeSelection } from "@/src/components/ReciepeSelection";
 
-const ReciepeDisplay = ({ triggerTimerOpen }: {
+interface ReciepeDisplayProps {
     triggerTimerOpen: () => void;
-}) => {
-    const [reciepeList, setReciepeList] = useState<IReciepe[]>([]);
-    const [currentReciepe, setCurrentReciepe] = useState<IReciepe>();
-    const [currentReciepeIndex, setCurrentReciepeIndex] = useState(0);
+    currentReciepeIndex: number;
+    reciepeList: IReciepe[];
+    currentReciepe?: IReciepe;
+    setCurrentReciepe: (reciepe: IReciepe) => void;
+    setCurrentReciepeIndex: (inx: number) => void;
+    setReciepeList: (r: IReciepe[]) => void;
+}
+
+const ReciepeDisplay = (props: ReciepeDisplayProps) => {
 
     useEffect(() => {
         const fetchReciepe = async () => {
             const reciepeData = await getReciepe();
-            setReciepeList(reciepeData);
+            props.setReciepeList(reciepeData);
             if (reciepeData.length > 0) {
-                setCurrentReciepe(reciepeData[0]);
+                props.setCurrentReciepe(reciepeData[0]);
             }
         }
         fetchReciepe();
@@ -33,23 +38,23 @@ const ReciepeDisplay = ({ triggerTimerOpen }: {
             position: 'relative',
         }}>
             <ReciepeSelection
-                currentReciepeIndex={currentReciepeIndex}
-                reciepeList={reciepeList}
-                setCurrentReciepe={setCurrentReciepe}
-                setCurrentReciepeIndex={setCurrentReciepeIndex} />
+                currentReciepeIndex={props.currentReciepeIndex}
+                reciepeList={props.reciepeList}
+                setCurrentReciepe={props.setCurrentReciepe}
+                setCurrentReciepeIndex={props.setCurrentReciepeIndex} />
 
             <div style={{ width: "10%", }}>
                 <div className="timer-play">
                     <div className="play-triangle" onClick={(event) => {
                         event.preventDefault()
                         window.history.pushState({}, '', '/timer');
-                        triggerTimerOpen();
+                        props.triggerTimerOpen();
                     }}>🕑</div>
                 </div>
             </div>
         </div>
 
-        {currentReciepe && <ReciepeBody reciepe={reciepeList[currentReciepeIndex]} />}
+        {props.currentReciepe && <ReciepeBody reciepe={props.reciepeList[props.currentReciepeIndex]} />}
     </section>)
 }
 
