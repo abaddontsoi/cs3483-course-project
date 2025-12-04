@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import { createPortal } from "react-dom";
 
-export class CameraWindow extends React.PureComponent {
+class CameraWindow extends React.PureComponent {
     containerEl: HTMLDivElement;
     externalWindow: Window | null;
     children: ReactNode
@@ -34,3 +34,5 @@ export class CameraWindow extends React.PureComponent {
         this.externalWindow.close();
     }
 }
+
+export default CameraWindow;
