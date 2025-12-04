@@ -1,5 +1,5 @@
 "use client";
-import CameraFeed from "@/components/cameraFeed";
+import CameraFeed from "@/src/components/cameraFeed";
 import { NormalizedLandmark } from "@mediapipe/tasks-vision";
 import { useEffect, useRef, useState } from "react";
 
