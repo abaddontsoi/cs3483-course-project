@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 
 import "./timer.css";
 import { useTimerContext } from "../contexts/TimerContext";
+import clsx from "clsx";
 
 interface TimerProps {
     backButtonCallback: () => void;
@@ -30,7 +31,7 @@ export default function Timer(props: TimerProps) {
         handleSetClick,
         handleClearClick,
         timePartsToBuffer,
-        resetTimParts,
+        resetTimeParts,
     } = useTimerContext();
 
     useEffect(() => {
@@ -57,7 +58,6 @@ export default function Timer(props: TimerProps) {
 
     useEffect(() => {
         if (remainingSeconds > 0) {
-            setBuffer("")
         }
     }, [remainingSeconds])
 
@@ -78,17 +78,50 @@ export default function Timer(props: TimerProps) {
 
                 <div className="number-display">
                     <div>
-                        <div>{pad2(timeParts.hours)[0]}{pad2(timeParts.hours)[1]}</div>
+                        <div>
+                            <span style={{
+                                color: selectedDigit == 5 && !running ? 'green' : 'black'
+                            }}>
+                                {pad2(timeParts.hours)[0]}
+                            </span>
+                            <span style={{
+                                color: selectedDigit == 4 && !running ? 'green' : 'black'
+                            }}>
+                                {pad2(timeParts.hours)[1]}
+                            </span>
+                        </div>
                         <div>Hour</div>
                     </div>
                     <div><div>:</div></div>
                     <div>
-                        <div>{pad2(timeParts.minutes)[0]}{pad2(timeParts.minutes)[1]}</div>
+                        <div>
+                            <span style={{
+                                color: selectedDigit == 3 && !running ? 'green' : 'black'
+                            }}>
+                                {pad2(timeParts.minutes)[0]}
+                            </span>
+                            <span style={{
+                                color: selectedDigit == 2 && !running ? 'green' : 'black'
+                            }}>
+                                {pad2(timeParts.minutes)[1]}
+                            </span>
+                        </div>
                         <div>Minutes</div>
                     </div>
                     <div><div>:</div></div>
                     <div>
-                        <div>{pad2(timeParts.seconds)[0]}{pad2(timeParts.seconds)[1]}</div>
+                        <div>
+                            <span style={{
+                                color: selectedDigit == 1 && !running ? 'green' : 'black'
+                            }}>
+                                {pad2(timeParts.seconds)[0]}
+                            </span>
+                            <span style={{
+                                color: selectedDigit == 0 && !running ? 'green' : 'black'
+                            }}>
+                                {pad2(timeParts.seconds)[1]}
+                            </span>
+                        </div>
                         <div>Seconds</div>
                     </div>
                 </div>
@@ -99,6 +132,6 @@ export default function Timer(props: TimerProps) {
                 </div>
 
             </div>
-        </div>
+        </div >
     )
 }

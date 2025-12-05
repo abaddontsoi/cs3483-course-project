@@ -30,7 +30,7 @@ interface TimerType {
     handleSetClick: () => void;
     handleClearClick: () => void;
     timePartsToBuffer: (tp: TimeParts) => string;
-    resetTimParts: () => void;
+    resetTimeParts: () => void;
 }
 
 // 2. Create the context with proper typing (undefined initially)
@@ -86,23 +86,25 @@ export function TimerProvider({ children }: TimerProviderProps) {
             setRemainingSeconds(secs)
             setRunning(true)
         }
+        resetTimeParts()
     }
 
     const handleClearClick = () => {
-        setBuffer("")
+        setBuffer("000000")
         setRunning(false)
         setRemainingSeconds(0)
         if (intervalRef.current) {
             window.clearInterval(intervalRef.current)
             intervalRef.current = null
         }
+        resetTimeParts()
     }
 
     const timePartsToBuffer = (t: TimeParts) => {
         return t.hours.toString() + t.minutes.toString() + t.seconds.toString();
     }
 
-    const resetTimParts = () => {
+    const resetTimeParts = () => {
         setTimeParts({
             seconds: 0,
             minutes: 0,
@@ -135,7 +137,7 @@ export function TimerProvider({ children }: TimerProviderProps) {
         handleSetClick,
         handleClearClick,
         timePartsToBuffer,
-        resetTimParts,
+        resetTimeParts,
     };
 
     return (

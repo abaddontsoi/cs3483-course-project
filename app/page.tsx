@@ -48,7 +48,7 @@ const Home = () => {
 		handleSetClick,
 		handleClearClick,
 		timePartsToBuffer,
-		resetTimParts,
+		resetTimeParts,
 	} = useTimerContext();
 
 
@@ -189,7 +189,7 @@ const Home = () => {
 							case 0:
 								setTimeParts(prev => {
 									return {
-										seconds: (prev.seconds - 1) % 60,
+										seconds: prev.seconds == 0 ? 59 : prev.seconds - 1 ,
 										minutes: prev.minutes,
 										hours: prev.hours
 									}
@@ -198,7 +198,7 @@ const Home = () => {
 							case 1:
 								setTimeParts(prev => {
 									return {
-										seconds: (prev.seconds - 10) % 60,
+										seconds: prev.seconds < 10 ? 60 + prev.seconds -10 : prev.seconds - 10,
 										minutes: prev.minutes,
 										hours: prev.hours
 									}
@@ -208,7 +208,7 @@ const Home = () => {
 								setTimeParts(prev => {
 									return {
 										seconds: prev.seconds,
-										minutes: (prev.minutes - 1) % 60,
+										minutes: prev.minutes == 0 ? 59: prev.minutes - 1,
 										hours: prev.hours,
 									}
 								})
@@ -217,7 +217,7 @@ const Home = () => {
 								setTimeParts(prev => {
 									return {
 										seconds: prev.seconds,
-										minutes: (prev.minutes - 10) % 60,
+										minutes: prev.minutes < 10 ? 60 + prev.minutes - 10: prev.minutes - 10,
 										hours: prev.hours,
 									}
 								})
@@ -227,7 +227,7 @@ const Home = () => {
 									return {
 										seconds: prev.seconds,
 										minutes: prev.minutes,
-										hours: (prev.hours - 1) % 24,
+										hours: prev.hours == 0 ? 23 : prev.hours - 1,
 									}
 								})
 								break;
@@ -236,7 +236,7 @@ const Home = () => {
 									return {
 										seconds: prev.seconds,
 										minutes: prev.minutes,
-										hours: (prev.hours - 10) % 24,
+										hours: prev.hours - 10 ? 24 + prev.hours - 10 : prev.hours - 10,
 									}
 								})
 								break;
@@ -248,13 +248,13 @@ const Home = () => {
 						setVelocityVector({ x: 0, y: 0 });
 					} else if (velocityVector.x > 0.2) {
 						// Move indicator right
-						setSelectedDigit(prev => (prev + 1) % 6)
+						setSelectedDigit(prev => prev == 0 ? 5 : prev - 1)
 						prevLandmarkRef.current = null;
 						setHandLandmark(null);
 						setVelocityVector({ x: 0, y: 0 });
 					} else if (velocityVector.x < -0.2) {
 						// Move indicator left
-						setSelectedDigit(prev => (prev - 1) % 6)
+						setSelectedDigit(prev => prev == 5 ? 0 : prev + 1)
 						prevLandmarkRef.current = null;
 						setHandLandmark(null);
 						setVelocityVector({ x: 0, y: 0 });
