@@ -10,6 +10,8 @@ import CameraFeed from "@/src/components/cameraFeed";
 
 import { NormalizedLandmark } from "@mediapipe/tasks-vision";
 import { IReciepe } from "@/src/ReciepeContent";
+import { TimerProvider } from "@/src/contexts/TimerContext";
+import Timer from "@/src/components/Timer";
 
 const Home = () => {
 	// 0 for recepies display, 1 for timer display
@@ -395,11 +397,15 @@ const Home = () => {
 			setCurrentReciepe={setCurrentReciepe}
 			setCurrentReciepeIndex={setCurrentReciepeIndex}
 			setReciepeList={setReciepeList} />)}
-		{page === 1 && (<TimerPage
-			timeParts={timeParts}
-			selectedDigit={selectedDigit}
-			backButtonCallback={() => setPage(0)}
-		/>)}
+		{page === 1 && (
+			<TimerProvider>
+				<Timer
+					timeParts={timeParts}
+					selectedDigit={selectedDigit}
+					backButtonCallback={() => setPage(0)}
+				/>
+			</TimerProvider>
+		)}
 	</>);
 }
 export default Home;
