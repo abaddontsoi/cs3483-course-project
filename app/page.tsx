@@ -180,8 +180,6 @@ const Home = () => {
 							default:
 								break;
 						}
-
-						timePartsToSeconds(timeparts);
 						prevLandmarkRef.current = null;
 						setHandLandmark(null);
 						setVelocityVector({ x: 0, y: 0 });
@@ -245,7 +243,6 @@ const Home = () => {
 							default:
 								break;
 						}
-						timePartsToSeconds(timeparts);
 						prevLandmarkRef.current = null;
 						setHandLandmark(null);
 						setVelocityVector({ x: 0, y: 0 });

@@ -6,6 +6,7 @@ import {
     Dispatch,
     SetStateAction,
     useRef,
+    useEffect,
 } from 'react';
 
 // 1. Define the shape of your context value
@@ -25,7 +26,7 @@ interface TimerType {
     timePartsToSeconds: (tp: TimeParts) => number;
     bufferToTimeParts: (buffer: string) => TimeParts;
     secondsToTimeParts: (total: number) => TimeParts;
-    handleNumberClick: (n:number) => void;
+    handleNumberClick: (n: number) => void;
     handleSetClick: () => void;
     handleClearClick: () => void;
     timePartsToBuffer: (tp: TimeParts) => string;
@@ -96,18 +97,22 @@ export function TimerProvider({ children }: TimerProviderProps) {
             intervalRef.current = null
         }
     }
-    
+
     const timePartsToBuffer = (t: TimeParts) => {
         return t.hours.toString() + t.minutes.toString() + t.seconds.toString();
     }
 
-	const resetTimParts = () => {
-		setTimeParts({
-			seconds: 0,
-			minutes: 0,
-			hours: 0
-		})
-	}
+    const resetTimParts = () => {
+        setTimeParts({
+            seconds: 0,
+            minutes: 0,
+            hours: 0
+        })
+    }
+
+    useEffect(() => {
+        setBuffer(pad2(timeparts.hours).toString() + pad2(timeparts.minutes).toString() + pad2(timeparts.seconds).toString())
+    }, [timeparts]);
 
     // Value that will be available everywhere
     const value: TimerType = {
