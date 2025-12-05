@@ -46,8 +46,8 @@ const ReciepeDisplay = (props: ReciepeDisplayProps) => {
             <div style={{ width: "10%", }}>
                 <div className="timer-play">
                     <div className="play-triangle" onClick={(event) => {
-                        event.preventDefault()
-                        window.history.pushState({}, '', '/timer');
+                        // event.preventDefault()
+                        // window.history.pushState({}, '', '/timer');
                         props.triggerTimerOpen();
                     }}>🕑</div>
                 </div>
