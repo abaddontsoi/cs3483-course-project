@@ -3,47 +3,35 @@
 import { useEffect, useRef, useState } from "react"
 
 import "./timer.css";
+import { useTimerContext } from "../contexts/TimerContext";
 
-interface TimerPageProps {
-    timeParts: TimeParts;
-    selectedDigit: number;
+interface TimerProps {
     backButtonCallback: () => void;
 }
 
-function pad2(n: number): string {
-    return n.toString().padStart(2, "0")
-}
-
-function bufferToTimeParts(buffer: string): TimeParts {
-    // buffer contains up to 6 digits representing HHMMSS (right-aligned)
-    const padded = buffer.padStart(6, "0")
-    const h = parseInt(padded.slice(0, 2), 10)
-    const m = parseInt(padded.slice(2, 4), 10)
-    const s = parseInt(padded.slice(4, 6), 10)
-    return { hours: isNaN(h) ? 0 : h, minutes: isNaN(m) ? 0 : m, seconds: isNaN(s) ? 0 : s }
-}
-
-function timePartsToSeconds(tp: TimeParts): number {
-    return tp.hours * 3600 + tp.minutes * 60 + tp.seconds
-}
-
-function secondsToTimeParts(total: number): TimeParts {
-    const clamped = Math.max(0, Math.floor(total))
-    const hours = Math.floor(clamped / 3600)
-    const minutes = Math.floor((clamped % 3600) / 60)
-    const seconds = clamped % 60
-    return { hours, minutes, seconds }
-}
-
-function timePartsToBuffer(t: TimeParts): string {
-    return t.hours.toString() + t.minutes.toString() + t.seconds.toString();
-}
-
-export default function Timer(props: TimerPageProps) {
-    const [buffer, setBuffer] = useState<string>("")
-    const [running, setRunning] = useState<boolean>(false)
-    const [remainingSeconds, setRemainingSeconds] = useState<number>(0)
-    const intervalRef = useRef<number | null>(null)
+export default function Timer(props: TimerProps) {
+    const {
+        buffer,
+        setBuffer,
+        timeparts,
+        setTimeParts,
+        selectedDigit,
+        setSelectedDigit,
+        running,
+        setRunning,
+        remainingSeconds,
+        setRemainingSeconds,
+        intervalRef,
+        pad2,
+        timePartsToSeconds,
+        bufferToTimeParts,
+        secondsToTimeParts,
+        handleNumberClick,
+        handleSetClick,
+        handleClearClick,
+        timePartsToBuffer,
+        resetTimParts,
+    } = useTimerContext();
 
     useEffect(() => {
         if (running) {
@@ -67,37 +55,16 @@ export default function Timer(props: TimerPageProps) {
         }
     }, [running])
 
+    useEffect(() => {
+        if (remainingSeconds > 0) {
+            setBuffer("")
+        }
+    }, [remainingSeconds])
+
     const handleBackClick = () => {
         window.history.pushState({}, '', '/');
         props.backButtonCallback();
     }
-
-    const handleNumberClick = (n: number) => {
-        if (running) { return };
-        setBuffer((b) => (b + n.toString()).slice(-6));
-    }
-
-    const handleSetClick = () => {
-        const secs = timePartsToSeconds(bufferToTimeParts(buffer))
-        if (secs > 0) {
-            setRemainingSeconds(secs)
-            setRunning(true)
-        }
-    }
-
-    const handleClearClick = () => {
-        setBuffer("")
-        setRunning(false)
-        setRemainingSeconds(0)
-        if (intervalRef.current) {
-            window.clearInterval(intervalRef.current)
-            intervalRef.current = null
-        }
-    }
-
-    useEffect(() => {
-        if (remainingSeconds > 0) setBuffer("")
-    }, [remainingSeconds])
 
     const timeParts = running ? secondsToTimeParts(remainingSeconds) : bufferToTimeParts(buffer)
 

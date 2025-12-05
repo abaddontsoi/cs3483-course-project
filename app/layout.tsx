@@ -1,5 +1,7 @@
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { TimerProvider } from "@/src/contexts/TimerContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+        <TimerProvider>
+          {children}
+        </TimerProvider>
       </body>
     </html>
   );
