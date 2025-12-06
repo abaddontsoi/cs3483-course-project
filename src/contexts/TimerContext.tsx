@@ -82,11 +82,13 @@ export function TimerProvider({ children }: TimerProviderProps) {
 
     const handleSetClick = () => {
         const secs = timePartsToSeconds(bufferToTimeParts(buffer))
-        if (secs > 0) {
+        if (secs >= 0 && !running) {
             setRemainingSeconds(secs)
             setRunning(true)
+            // resetTimeParts()
+        } else {
+            setRunning(false)
         }
-        resetTimeParts()
     }
 
     const handleClearClick = () => {

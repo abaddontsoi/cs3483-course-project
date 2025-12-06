@@ -48,6 +48,8 @@ export default function Timer(props: TimerProps) {
                     return prev - 1
                 })
             }, 1000)
+        } else {
+            if (intervalRef.current) window.clearInterval(intervalRef.current)
         }
 
         return () => {
@@ -58,6 +60,8 @@ export default function Timer(props: TimerProps) {
 
     useEffect(() => {
         if (remainingSeconds > 0) {
+            const secs = secondsToTimeParts(remainingSeconds);
+            setBuffer(timePartsToBuffer(secs));
         }
     }, [remainingSeconds])
 
